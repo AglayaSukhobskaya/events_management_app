@@ -2,11 +2,14 @@ package com.light_digital.sukhobskaya.TestTask.service;
 
 import com.light_digital.sukhobskaya.TestTask.exception.NotFoundException;
 import com.light_digital.sukhobskaya.TestTask.model.Event;
+import com.light_digital.sukhobskaya.TestTask.model.User;
 import com.light_digital.sukhobskaya.TestTask.repository.EventRepository;
+import com.light_digital.sukhobskaya.TestTask.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +19,7 @@ import java.util.Optional;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     public List<Event> getAll() {
         return eventRepository.findAll();
@@ -29,6 +33,7 @@ public class EventService {
 
     @Transactional
     public void create(Event event) {
+        event.setParticipants(new ArrayList<>());
         eventRepository.save(event);
     }
 
@@ -41,5 +46,14 @@ public class EventService {
     @Transactional
     public void delete(int id) {
         eventRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void userRegistrationForEvent(int userId, int eventId) {
+        Optional<User> foundUser = userRepository.findById(userId);
+        Optional<Event> foundEvent = eventRepository.findById(eventId);
+
+        foundUser.get().getEvents().add(foundEvent.get());
+        foundEvent.get().getParticipants().add(foundUser.get());
     }
 }

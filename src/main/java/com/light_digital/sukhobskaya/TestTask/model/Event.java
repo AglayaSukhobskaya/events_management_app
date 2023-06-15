@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -33,4 +34,7 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private Admin owner;
+
+    @ManyToMany(mappedBy = "events")
+    private List<User> participants;
 }

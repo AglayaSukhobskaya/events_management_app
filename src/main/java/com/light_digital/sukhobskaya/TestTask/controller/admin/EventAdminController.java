@@ -2,12 +2,12 @@ package com.light_digital.sukhobskaya.TestTask.controller.admin;
 
 import com.light_digital.sukhobskaya.TestTask.dto.EventDTO;
 import com.light_digital.sukhobskaya.TestTask.exception.Handler;
-import com.light_digital.sukhobskaya.TestTask.model.Admin;
 import com.light_digital.sukhobskaya.TestTask.model.Event;
 import com.light_digital.sukhobskaya.TestTask.security.AccountDetails;
+import com.light_digital.sukhobskaya.TestTask.service.AccountDetailsService;
+import com.light_digital.sukhobskaya.TestTask.service.AdminService;
 import com.light_digital.sukhobskaya.TestTask.service.EventService;
 import com.light_digital.sukhobskaya.TestTask.util.EventValidator;
-import com.light_digital.sukhobskaya.TestTask.util.AdminValidator;
 import com.light_digital.sukhobskaya.TestTask.util.ValidationUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -26,9 +26,9 @@ import java.util.List;
 public class EventAdminController implements Handler {
 
     private final EventService eventService;
+    private final AdminService adminService;
     private final ModelMapper modelMapper;
     private final EventValidator eventValidator;
-    private final AdminValidator adminValidator;
 
     @GetMapping
     public List<EventDTO> getAll(@AuthenticationPrincipal AccountDetails accountDetails) {
@@ -50,14 +50,13 @@ public class EventAdminController implements Handler {
     public ResponseEntity<HttpStatus> create(@AuthenticationPrincipal AccountDetails accountDetails,
                                              @RequestBody @Valid EventDTO eventDTO,
                                              BindingResult bindingResult) {
-//        personValidator.hasContract(personDetails);
 
         Event event = modelMapper.map(eventDTO, Event.class);
         eventValidator.validate(event, bindingResult);
 
         ValidationUtil.checkDataValidity(bindingResult);
 
-        event.setOwner((Admin) accountDetails.getAccount());
+        event.setOwner(adminService.get(accountDetails.getAccount().getId()));
         eventService.create(event);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -71,7 +70,7 @@ public class EventAdminController implements Handler {
         eventValidator.eventBelongsToPerson(accountDetails, eventService.get(id));
 
         Event event = modelMapper.map(eventDTO, Event.class);
-        event.setOwner((Admin) accountDetails.getAccount());
+        event.setOwner(adminService.get(accountDetails.getAccount().getId()));
         eventValidator.validate(event, bindingResult);
 
         ValidationUtil.checkDataValidity(bindingResult);

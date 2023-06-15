@@ -21,5 +21,4 @@ public class UserDTO extends AccountDTO {
 
     @Range(min = 16)
     private int age;
-
 }

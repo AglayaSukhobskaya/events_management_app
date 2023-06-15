@@ -3,6 +3,7 @@ package com.light_digital.sukhobskaya.TestTask.controller.admin;
 import com.light_digital.sukhobskaya.TestTask.dto.AdminDTO;
 import com.light_digital.sukhobskaya.TestTask.exception.Handler;
 import com.light_digital.sukhobskaya.TestTask.model.Admin;
+import com.light_digital.sukhobskaya.TestTask.security.AccountDetails;
 import com.light_digital.sukhobskaya.TestTask.security.JWTUtil;
 import com.light_digital.sukhobskaya.TestTask.service.AdminService;
 import com.light_digital.sukhobskaya.TestTask.util.AdminValidator;
@@ -12,11 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -31,6 +30,11 @@ public class AdminController implements Handler {
     private final ModelMapper modelMapper;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+
+    @GetMapping()
+    public AdminDTO get(@AuthenticationPrincipal AccountDetails accountDetails) {
+        return modelMapper.map(adminService.get(accountDetails.getAccount().getId()), AdminDTO.class);
+    }
 
     @PostMapping("/registration")
     public Map<String, String> register(@RequestBody @Valid AdminDTO adminDTO,
