@@ -1,0 +1,8 @@
+package com.light_digital.sukhobskaya.TestTask.exception;
+
+public class NotFoundException extends RuntimeException {
+
+    public NotFoundException(String msg) {
+        super(msg);
+    }
+}
