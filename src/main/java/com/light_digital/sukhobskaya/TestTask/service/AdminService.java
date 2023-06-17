@@ -33,4 +33,9 @@ public class AdminService {
         adminRepository.save(admin);
     }
 
+    @Transactional
+    public void delete(int id) {
+        adminRepository.deleteById(id);
+    }
+
 }

@@ -10,6 +10,8 @@ import com.light_digital.sukhobskaya.TestTask.util.AdminValidator;
 import com.light_digital.sukhobskaya.TestTask.util.ValidationUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +23,6 @@ import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth/admin")
 @AllArgsConstructor
 public class AdminController implements Handler {
 
@@ -31,12 +32,12 @@ public class AdminController implements Handler {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping()
+    @GetMapping("/api/admin")
     public AdminDTO get(@AuthenticationPrincipal AccountDetails accountDetails) {
         return modelMapper.map(adminService.get(accountDetails.getAccount().getId()), AdminDTO.class);
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/auth/admin/registration")
     public Map<String, String> register(@RequestBody @Valid AdminDTO adminDTO,
                                         BindingResult bindingResult) {
 
@@ -51,7 +52,7 @@ public class AdminController implements Handler {
         return Map.of("jwt-token", token);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/admin/login")
     public Map<String, String> performLogin(@RequestBody AdminDTO adminDTO) {
 
         UsernamePasswordAuthenticationToken authInputToken =
@@ -66,6 +67,12 @@ public class AdminController implements Handler {
 
         String token = jwtUtil.generateToken(adminDTO.getLogin());
         return Map.of("jwt-token", token);
+    }
+
+    @DeleteMapping("/api/admin")
+    public ResponseEntity<HttpStatus> delete(@AuthenticationPrincipal AccountDetails accountDetails) {
+        adminService.delete(accountDetails.getAccount().getId());
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }

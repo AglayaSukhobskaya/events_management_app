@@ -1,8 +1,6 @@
 package com.light_digital.sukhobskaya.TestTask.model;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -27,7 +25,7 @@ public class User extends Account {
     @Range(min = 16)
     private int age;
 
-    @ManyToMany
+    @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_event",
             joinColumns = @JoinColumn(name = "user_id"),
