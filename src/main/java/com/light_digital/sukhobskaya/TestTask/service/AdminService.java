@@ -2,7 +2,9 @@ package com.light_digital.sukhobskaya.TestTask.service;
 
 import com.light_digital.sukhobskaya.TestTask.exception.NotFoundException;
 import com.light_digital.sukhobskaya.TestTask.model.Admin;
+import com.light_digital.sukhobskaya.TestTask.model.Contract;
 import com.light_digital.sukhobskaya.TestTask.repository.AdminRepository;
+import com.light_digital.sukhobskaya.TestTask.repository.ContractRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,8 @@ import java.util.Optional;
 public class AdminService {
 
     private final AdminRepository adminRepository;
+    private final ContractRepository contractRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public Admin get(int id) {
-        Optional<Admin> foundAdmin = adminRepository.findById(id);
-        return foundAdmin.orElseThrow(() -> new NotFoundException("Admin with id="
-                + id + " not found!"));
-    }
 
     @Transactional
     public void register(Admin admin) {
@@ -31,6 +28,16 @@ public class AdminService {
         admin.setRole("ROLE_ADMIN");
         admin.setEvents(new ArrayList<>());
         adminRepository.save(admin);
+
+        Contract contract = new Contract(admin);
+        contractRepository.save(contract);
+        admin.setContract(contract);
+    }
+
+    public Admin get(int id) {
+        Optional<Admin> foundAdmin = adminRepository.findById(id);
+        return foundAdmin.orElseThrow(() -> new NotFoundException("Admin with id="
+                + id + " not found!"));
     }
 
     @Transactional

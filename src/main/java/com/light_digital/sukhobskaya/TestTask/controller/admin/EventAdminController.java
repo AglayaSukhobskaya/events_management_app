@@ -7,6 +7,7 @@ import com.light_digital.sukhobskaya.TestTask.security.AccountDetails;
 import com.light_digital.sukhobskaya.TestTask.service.AccountDetailsService;
 import com.light_digital.sukhobskaya.TestTask.service.AdminService;
 import com.light_digital.sukhobskaya.TestTask.service.EventService;
+import com.light_digital.sukhobskaya.TestTask.util.AdminValidator;
 import com.light_digital.sukhobskaya.TestTask.util.EventValidator;
 import com.light_digital.sukhobskaya.TestTask.util.ValidationUtil;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class EventAdminController implements Handler {
     private final AdminService adminService;
     private final ModelMapper modelMapper;
     private final EventValidator eventValidator;
+    private final AdminValidator adminValidator;
 
     @GetMapping
     public List<EventDTO> getAll(@AuthenticationPrincipal AccountDetails accountDetails) {
@@ -50,6 +52,7 @@ public class EventAdminController implements Handler {
     public ResponseEntity<HttpStatus> create(@AuthenticationPrincipal AccountDetails accountDetails,
                                              @RequestBody @Valid EventDTO eventDTO,
                                              BindingResult bindingResult) {
+        adminValidator.haveSignedContract(accountDetails);
 
         Event event = modelMapper.map(eventDTO, Event.class);
         eventValidator.validate(event, bindingResult);

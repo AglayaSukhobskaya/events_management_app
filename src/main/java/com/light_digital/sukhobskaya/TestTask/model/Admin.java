@@ -1,6 +1,7 @@
 package com.light_digital.sukhobskaya.TestTask.model;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -22,8 +23,11 @@ public class Admin extends Account {
     @Size(min = 2, max = 100, message = "Name should be between 2 and 100 characters!")
     private String name;
 
+    @OneToOne(mappedBy = "admin")
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Contract contract;
+
     @OneToMany(mappedBy = "owner")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Event> events;
-
 }
