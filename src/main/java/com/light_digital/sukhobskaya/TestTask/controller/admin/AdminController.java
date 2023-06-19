@@ -75,4 +75,11 @@ public class AdminController implements Handler {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @PostMapping("/api/admin/application")
+    public ResponseEntity<HttpStatus> applyForContract(@AuthenticationPrincipal AccountDetails accountDetails) {
+        adminValidator.contractCheck(accountDetails.getAccount().getId());
+        adminService.applyForContract(accountDetails.getAccount().getId());
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
 }

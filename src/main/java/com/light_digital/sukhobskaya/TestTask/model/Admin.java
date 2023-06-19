@@ -24,8 +24,10 @@ public class Admin extends Account {
     private String name;
 
     @OneToOne(mappedBy = "admin")
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Contract contract;
+
+    @OneToOne(mappedBy = "admin")
+    private Application application;
 
     @OneToMany(mappedBy = "owner")
     @OnDelete(action = OnDeleteAction.CASCADE)

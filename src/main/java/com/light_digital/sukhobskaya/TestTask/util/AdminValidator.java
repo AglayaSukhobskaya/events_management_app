@@ -44,4 +44,14 @@ public class AdminValidator implements Validator {
         }
     }
 
+    public void contractCheck(int id) {
+        Optional<Admin> foundAdmin = adminRepository.findById(id);
+        if (foundAdmin.isEmpty()) {
+            throw new NotFoundException("Admin does not exist!");
+        }
+        if (foundAdmin.get().getContract().isSigned()) {
+            throw new NotValidDataException("Your contract is already signed!");
+        }
+    }
+
 }
