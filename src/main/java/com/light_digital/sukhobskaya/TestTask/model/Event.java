@@ -17,24 +17,23 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
-
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
     @Column(name = "name", nullable = false, unique = true)
     @NotBlank(message = "Name should not be empty!")
     @Size(min = 2, max = 50, message = "Name should be between 2 and 50 characters!")
-    private String name;
+    String name;
 
     @Column(name = "price")
-    private int price;
+    Integer price;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
-    private Admin owner;
+    Admin owner;
 
     @ManyToMany(mappedBy = "events")
-    private List<User> participants;
+    List<User> participants;
 }

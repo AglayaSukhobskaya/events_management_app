@@ -5,7 +5,9 @@ import com.light_digital.sukhobskaya.TestTask.model.User;
 import com.light_digital.sukhobskaya.TestTask.repository.AdminRepository;
 import com.light_digital.sukhobskaya.TestTask.repository.UserRepository;
 import com.light_digital.sukhobskaya.TestTask.security.AccountDetails;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,10 +19,10 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccountDetailsService implements UserDetailsService {
-
-    private final AdminRepository adminRepository;
-    private final UserRepository userRepository;
+    AdminRepository adminRepository;
+    UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,10 +33,6 @@ public class AccountDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Account not found!");
         }
 
-        if (foundAdmin.isPresent()) {
-            return new AccountDetails(foundAdmin.get());
-        } else {
-            return new AccountDetails(foundUser.get());
-        }
+        return foundAdmin.map(AccountDetails::new).orElseGet(() -> new AccountDetails(foundUser.get()));
     }
 }

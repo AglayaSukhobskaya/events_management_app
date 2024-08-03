@@ -5,7 +5,9 @@ import com.light_digital.sukhobskaya.TestTask.model.Event;
 import com.light_digital.sukhobskaya.TestTask.model.User;
 import com.light_digital.sukhobskaya.TestTask.repository.EventRepository;
 import com.light_digital.sukhobskaya.TestTask.repository.UserRepository;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,19 +18,18 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventService {
-
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    EventRepository eventRepository;
+    UserRepository userRepository;
 
     public List<Event> getAll() {
         return eventRepository.findAll();
     }
 
-    public Event get(int id) {
-        Optional<Event> event = eventRepository.findById(id);
-        return event.orElseThrow(() -> new NotFoundException("Event with id=" +
-                id + " not found!"));
+    public Event get(Integer id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + id + " not found!"));
     }
 
     @Transactional
@@ -38,18 +39,18 @@ public class EventService {
     }
 
     @Transactional
-    public void update(int id, Event event) {
+    public void update(Integer id, Event event) {
         event.setId(id);
         eventRepository.save(event);
     }
 
     @Transactional
-    public void delete(int id) {
+    public void delete(Integer id) {
         eventRepository.deleteById(id);
     }
 
     @Transactional
-    public void userRegistrationForEvent(int userId, int eventId) {
+    public void userRegistrationForEvent(Integer userId, Integer eventId) {
         Optional<User> foundUser = userRepository.findById(userId);
         Optional<Event> foundEvent = eventRepository.findById(eventId);
 

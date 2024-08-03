@@ -9,7 +9,9 @@ import com.light_digital.sukhobskaya.TestTask.security.JWTUtil;
 import com.light_digital.sukhobskaya.TestTask.service.UserService;
 import com.light_digital.sukhobskaya.TestTask.util.UserValidator;
 import com.light_digital.sukhobskaya.TestTask.util.ValidationUtil;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +28,13 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController implements Handler {
-
-    private final UserService userService;
-    private final UserValidator userValidator;
-    private final ModelMapper modelMapper;
-    private final JWTUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    UserService userService;
+    UserValidator userValidator;
+    ModelMapper modelMapper;
+    JWTUtil jwtUtil;
+    AuthenticationManager authenticationManager;
 
     @PostMapping("/auth/user/registration")
     public Map<String, String> register(@RequestBody @Valid UserDTO userDTO,

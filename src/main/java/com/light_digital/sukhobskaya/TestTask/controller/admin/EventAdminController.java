@@ -10,7 +10,9 @@ import com.light_digital.sukhobskaya.TestTask.service.EventService;
 import com.light_digital.sukhobskaya.TestTask.util.AdminValidator;
 import com.light_digital.sukhobskaya.TestTask.util.EventValidator;
 import com.light_digital.sukhobskaya.TestTask.util.ValidationUtil;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +26,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/events")
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EventAdminController implements Handler {
-
-    private final EventService eventService;
-    private final AdminService adminService;
-    private final ModelMapper modelMapper;
-    private final EventValidator eventValidator;
-    private final AdminValidator adminValidator;
+    EventService eventService;
+    AdminService adminService;
+    ModelMapper modelMapper;
+    EventValidator eventValidator;
+    AdminValidator adminValidator;
 
     @GetMapping
     public List<EventDTO> getAll(@AuthenticationPrincipal AccountDetails accountDetails) {
@@ -42,7 +44,7 @@ public class EventAdminController implements Handler {
 
     @GetMapping("/{id}")
     public EventDTO get(@AuthenticationPrincipal AccountDetails personDetails,
-                        @PathVariable("id") int id) {
+                        @PathVariable("id") Integer id) {
         Event event = eventService.get(id);
         eventValidator.eventBelongsToPerson(personDetails, event);
         return modelMapper.map(event, EventDTO.class);
@@ -66,7 +68,7 @@ public class EventAdminController implements Handler {
 
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@AuthenticationPrincipal AccountDetails accountDetails,
-                                             @PathVariable("id") int id,
+                                             @PathVariable("id") Integer id,
                                              @RequestBody @Valid EventDTO eventDTO,
                                              BindingResult bindingResult) {
         eventValidator.isExist(id);
@@ -84,7 +86,7 @@ public class EventAdminController implements Handler {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@AuthenticationPrincipal AccountDetails personDetails,
-                                             @PathVariable("id") int id) {
+                                             @PathVariable("id") Integer id) {
         eventValidator.isExist(id);
         eventValidator.eventBelongsToPerson(personDetails, eventService.get(id));
         eventService.delete(id);

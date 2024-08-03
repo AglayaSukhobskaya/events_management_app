@@ -3,7 +3,9 @@ package com.light_digital.sukhobskaya.TestTask.config;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.light_digital.sukhobskaya.TestTask.security.JWTUtil;
 import com.light_digital.sukhobskaya.TestTask.service.AccountDetailsService;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +20,10 @@ import java.io.IOException;
 
 @Component
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JWTFilter extends OncePerRequestFilter {
-    private final JWTUtil jwtUtil;
-    private final AccountDetailsService personDetailsService;
+    JWTUtil jwtUtil;
+    AccountDetailsService personDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

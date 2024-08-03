@@ -8,7 +8,9 @@ import com.light_digital.sukhobskaya.TestTask.security.JWTUtil;
 import com.light_digital.sukhobskaya.TestTask.service.AdminService;
 import com.light_digital.sukhobskaya.TestTask.util.AdminValidator;
 import com.light_digital.sukhobskaya.TestTask.util.ValidationUtil;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +26,13 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminController implements Handler {
-
-    private final AdminService adminService;
-    private final AdminValidator adminValidator;
-    private final ModelMapper modelMapper;
-    private final JWTUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    AdminService adminService;
+    AdminValidator adminValidator;
+    ModelMapper modelMapper;
+    JWTUtil jwtUtil;
+    AuthenticationManager authenticationManager;
 
     @GetMapping("/api/admin")
     public AdminDTO get(@AuthenticationPrincipal AccountDetails accountDetails) {

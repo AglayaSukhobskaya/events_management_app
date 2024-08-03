@@ -1,9 +1,7 @@
 package com.light_digital.sukhobskaya.TestTask.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
@@ -13,16 +11,16 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Application {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
     @OneToOne
     @JoinColumn(name = "admin_id", referencedColumnName = "id")
-    private Admin admin;
+    Admin admin;
 
     public Application(Admin admin) {
         this.admin = admin;

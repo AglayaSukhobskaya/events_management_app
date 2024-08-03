@@ -5,19 +5,19 @@ import com.light_digital.sukhobskaya.TestTask.exception.NotValidDataException;
 import com.light_digital.sukhobskaya.TestTask.model.Admin;
 import com.light_digital.sukhobskaya.TestTask.repository.AdminRepository;
 import com.light_digital.sukhobskaya.TestTask.security.AccountDetails;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.Optional;
-
 @Component
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminValidator implements Validator {
-    private final AdminRepository adminRepository;
+    AdminRepository adminRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -35,23 +35,18 @@ public class AdminValidator implements Validator {
     }
 
     public void haveSignedContract(AccountDetails accountDetails) {
-        Optional<Admin> foundAdmin = adminRepository.findByLogin(accountDetails.getUsername());
-        if (foundAdmin.isEmpty()) {
-            throw new NotFoundException("Admin does not exist!");
-        }
-        if (!foundAdmin.get().getContract().isSigned()) {
+        var foundAdmin = adminRepository.findByLogin(accountDetails.getUsername())
+                .orElseThrow(() -> new NotFoundException("Admin does not exist!"));
+        if (!foundAdmin.getContract().getSigned()) {
             throw new NotValidDataException("Admin does not have signed contract!");
         }
     }
 
-    public void contractCheck(int id) {
-        Optional<Admin> foundAdmin = adminRepository.findById(id);
-        if (foundAdmin.isEmpty()) {
-            throw new NotFoundException("Admin does not exist!");
-        }
-        if (foundAdmin.get().getContract().isSigned()) {
+    public void contractCheck(Integer id) {
+        var foundAdmin = adminRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Admin does not exist!"));
+        if (foundAdmin.getContract().getSigned()) {
             throw new NotValidDataException("Your contract is already signed!");
         }
     }
-
 }
